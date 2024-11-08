@@ -1,0 +1,515 @@
+//#include <windows.h>
+//#include "icb_gui.h"
+//
+////#pragma comment (lib,"winmm.lib")
+//
+//int F1, F2;
+//ICBYTES Corridor, Agent;
+//ICBYTES AgentStanding; // Ajan ayakta dururken
+//ICBYTES AgentRun[4];   // Normal hýzda koþan ajan
+//ICBYTES AgentRunFast[6]; // Hýzlandýrýlmýþ ajan koþma dizisi
+//
+//void ICGUI_Create() {
+//    ICG_MWSize(1200, 830);
+//    ICG_MWTitle("IMPOSSIBLE MISSION");
+//}
+//
+//void LoadAgentRun() {
+//    ReadImage("grass.bmp", Corridor);
+//
+//    // Ajanýn durduðu pozisyonu yükleme
+//    Copy(Agent, 212, 7, 45, 55, AgentStanding);
+//    PasteNon0(AgentStanding, 600, 450, Corridor);
+//
+//    // Koþma animasyonu için diziyi doldurma
+//    ICBYTES cordinat{ {210, 7, 45, 55}, {286, 7, 45, 55}, {210, 67, 45, 55}, {286, 66, 45, 55} };
+//    for (int i = 0; i < cordinat.Y(); i++) {
+//        Copy(Agent, cordinat.I(1, i + 1), cordinat.I(2, i + 1), cordinat.I(3, i + 1), cordinat.I(4, i + 1), AgentRun[i]);
+//    }
+//
+//    // Hýzlý koþma animasyonu için diziyi doldurma
+//    ICBYTES fastCordinat{ {210, 7, 45, 55}, {113, 8, 75, 55}, {19, 67, 75, 55}, {210, 67, 45, 55}, {113, 67, 75, 55}, {19, 5, 75, 55} };
+//    for (int i = 0; i < fastCordinat.Y(); i++) {
+//        Copy(Agent, fastCordinat.I(1, i + 1), fastCordinat.I(2, i + 1), fastCordinat.I(3, i + 1), fastCordinat.I(4, i + 1), AgentRunFast[i]);
+//    }
+//
+//    ICBYTES TV;
+//    MagnifyX3(Corridor, TV); // Arka planý büyüterek gösterme
+//    DisplayImage(F1, TV); // Arka plan yüklü
+//}
+//
+//void MakeAgentRun(void*) {
+//    int xcor = 1, ycor = 100; // Ajanýn baþlangýç pozisyonu
+//    ICBYTES TV, back;
+//    int step[] = { 3, 3, 3, 3 }; // Normal hýz adýmlarý
+//    int fastStep[] = { 9, 9, 9, 9 }; // Hýzlý adýmlar
+//    bool isFast = false; // Hýzlandýrma bayraðý
+//
+//    // Arka planý yükle ve göster
+//    ReadImage("grass.bmp", Corridor);
+//    MagnifyX3(Corridor, TV);
+//    DisplayImage(F1, TV);
+//
+//    // Baþlangýçta ajan durma pozisyonu gösteriliyor
+//    PasteNon0(AgentStanding, xcor, ycor, Corridor);
+//    MagnifyX3(Corridor, TV);
+//    DisplayImage(F1, TV);
+//
+//    int i = 0;
+//    while (true) {
+//        // Her karede arka planý yeniden çizme
+//        ReadImage("grass.bmp", Corridor); // Önceki kareyi temizler
+//        PasteNon0(AgentStanding, xcor, ycor, Corridor); // Ajaný pozisyonuna göre yeniden çizer
+//
+//        // Hýz kontrolü
+//        if (xcor >= 150) {
+//            isFast = true; // Hýzlý harekete geç
+//        }
+//
+//        if (isFast) {
+//            PasteNon0(AgentRunFast[i % 6], xcor, ycor, Corridor); // Hýzlý kareler
+//            xcor += fastStep[i % 4]; // Hýzlý hareket
+//        }
+//        else {
+//            PasteNon0(AgentRun[i % 4], xcor, ycor, Corridor); // Normal kareler
+//            xcor += step[i % 4]; // Normal hareket
+//        }
+//
+//        // Güncellenmiþ kareyi gösterme
+//        MagnifyX3(Corridor, TV);
+//        DisplayImage(F1, TV);
+//        Sleep(isFast ? 40 : 60); // Hýz durumuna göre bekleme süresi
+//
+//        if (i % 4 == 0) PlaySound("Step.wav", NULL, SND_ASYNC); // Adým sesi
+//        i++;
+//
+//        // Ajan sýnýrý geçtiðinde baþlangýca döndürme
+//        if (xcor > 300) {
+//            xcor = 1; // Pozisyonu sýfýrla
+//            isFast = false; // Hýzý sýfýrla
+//            i = 0;
+//        }
+//    }
+//}
+//
+//void ICGUI_main() {
+//    F1 = ICG_FrameThin(5, 140, 450, 430);
+//    F2 = ICG_FrameThin(5, 5, 20, 20);
+//    ICG_Button(400, 5, 160, 55, "Load Agent Run\n1 -----------------------------------\n KOÞAN AJANI YÜKLE", LoadAgentRun);
+//    ICG_TButton(580, 5, 160, 55, "Make Agent Run\n2 -----------------------------------\n AJANI KOÞTUR", MakeAgentRun, NULL);
+//    ReadImage("grass.bmp", Corridor);
+//    DisplayImage(F1, Corridor);
+//    ReadImage("5363267w.bmp", Agent);
+//    DisplayImage(F2, Agent);
+//}
+
+//#include<windows.h>
+//#include"icb_gui.h"
+//
+////#pragma comment (lib,"winmm.lib")
+//
+//int F1, F2;
+//ICBYTES Corridor, Agent;
+//ICBYTES AgentStanding;//Ajan ayakta dururken 
+////AJAN KO?MA KARELER? ALTTAK? RES?M D?Z?N?NE YÜKLEN?YOR
+//ICBYTES AgentRun[4]; // <--Agent Running sequence will be uploaded here
+//void ICGUI_Create()
+//{
+//    ICG_MWSize(1200, 830);
+//    ICG_MWTitle("IMPOSSIBLE MISSION");
+//}
+//
+//void LoadAgentRun()
+//{
+//    Copy(Agent, 5, 10, 13, 30, AgentStanding);
+//    PasteNon0(AgentStanding, 10, 58, Corridor);
+//    ICBYTES cordinat{ {210, 7, 45, 55}, {286, 7, 45, 55}, {210, 67, 45, 55}, {286, 66, 45, 55} };
+//    for (int i = 1; i <= cordinat.Y(); i++)
+//    {
+//        Copy(Agent, cordinat.I(1, i), cordinat.I(2, i), cordinat.I(3, i), cordinat.I(4, i), AgentRun[i - 1]);
+//        PasteNon0(AgentRun[i - 1], 33 * i, 58, Corridor);
+//    }
+//    ICBYTES TV;
+//    MagnifyX3(Corridor, TV);
+//    DisplayImage(F1, TV);
+//
+//}
+//
+//void MakeAgentRun(void*)
+//{
+//    int xcor = 1, ycor = 58;
+//    ICBYTES TV, back;
+//    int step[] = { 5,5,5,5,5,8,8 };
+//    ReadImage("impossible_mission_elevator.bmp", Corridor);
+//    Copy(Corridor, xcor, ycor, 25, 32, back);
+//    PasteNon0(AgentStanding, xcor, ycor, Corridor);
+//    MagnifyX3(Corridor, TV);
+//    DisplayImage(F1, TV);
+//    PlaySound("Another_Visitor.wav", NULL, SND_SYNC);
+//    Paste(back, xcor, ycor, Corridor);
+//    int i = 0;
+//    while (true)
+//    {
+//        Copy(Corridor, xcor, ycor, 25, 32, back);
+//        PasteNon0(AgentRun[i % 7], xcor, ycor, Corridor);
+//        MagnifyX3(Corridor, TV);
+//        DisplayImage(F1, TV);
+//#ifdef _DEBUG
+//        Sleep(20);//DEBUG MODU YAVA? OLDU?U ?Ç?N DAHA AZ BEKLET?YORUZ
+//#else
+//        Sleep(60); //Release mode is fast so we delay more
+//#endif
+//        Paste(back, xcor, ycor, Corridor);
+//        if (i % 7 == 4)PlaySound("Step.wav", NULL, SND_ASYNC);
+//        xcor += step[i % 7];
+//        i++;
+//        if (i > 52) {
+//            xcor = 1; i = 0;
+//        }
+//    }
+//}
+//
+//
+//void ICGUI_main()
+//{
+//    F1 = ICG_FrameThin(5, 140, 450, 430);
+//    F2 = ICG_FrameThin(5, 5, 20, 20);
+//    ICG_Button(400, 5, 160, 55, "Load Agent Run\n1 -----------------------------------\n KO?AN AJANI YÜKLE", LoadAgentRun);
+//    ICG_TButton(580, 5, 160, 55, "Make Agent Run\n2 -----------------------------------\n AJANI KO?TUR", MakeAgentRun, NULL);
+//    ReadImage("impossible_mission_elevator.bmp", Corridor);
+//    DisplayImage(F1, Corridor);
+//    ReadImage("x.bmp", Agent);
+//    DisplayImage(F2, Agent);
+//}
+
+//#include <windows.h>
+//#include "icb_gui.h"
+//
+////#pragma comment (lib,"winmm.lib")
+//
+//int F1, F2;
+//ICBYTES Corridor, Agent, UFO;
+//ICBYTES AgentStanding; // Ajan ayakta dururken
+//ICBYTES AgentRun[4];   // Normal hýzda koþan ajan
+//ICBYTES AgentRunFast[6]; // Hýzlandýrýlmýþ ajan koþma dizisi
+//
+//void ICGUI_Create() {
+//    ICG_MWSize(1200, 830);
+//    ICG_MWTitle("IMPOSSIBLE MISSION");
+//}
+//
+//void LoadAgentRun() {
+//    ReadImage("touchsome.bmp", Corridor);
+//    ReadImage("pixilUfo.bmp", UFO); // UFO görüntüsünü yükle
+//
+//    // Ajanýn durduðu pozisyonu yükleme
+//    Copy(Agent, 212, 7, 45, 55, AgentStanding);
+//    PasteNon0(AgentStanding, 600, 450, Corridor);
+//
+//    // Koþma animasyonu için diziyi doldurma
+//    ICBYTES cordinat{ {210, 7, 50, 55}, {286, 7, 50, 55}, {210, 67, 50, 55}, {286, 66, 50, 55} };
+//    for (int i = 0; i < cordinat.Y(); i++) {
+//        Copy(Agent, cordinat.I(1, i + 1), cordinat.I(2, i + 1), cordinat.I(3, i + 1), cordinat.I(4, i + 1), AgentRun[i]);
+//        PasteNon0(AgentRun[i], 33 * i, 58, Corridor);
+//    }
+//
+//    // Hýzlý koþma animasyonu için diziyi doldurma
+//    ICBYTES fastCordinat{ {210, 7, 50, 55}, {113, 8, 75, 55}, {19, 67, 75, 55}, {210, 67, 50, 55}, {113, 67, 75, 55}, {19, 5, 75, 55} };
+//    for (int i = 0; i < fastCordinat.Y(); i++) {
+//        Copy(Agent, fastCordinat.I(1, i + 1), fastCordinat.I(2, i + 1), fastCordinat.I(3, i + 1), fastCordinat.I(4, i + 1), AgentRunFast[i]);
+//    }
+//
+//    ICBYTES TV;
+//    MagnifyX3(Corridor, TV); // Arka planý büyüterek gösterme
+//    DisplayImage(F1, TV); // Arka plan yüklü
+//}
+//
+//void MakeAgentRun(void*) {
+//    int xcor = 1, ycor = 85; // Ajanýn pozisyonu
+//    int ufoX = 250, ufoY = 20; // UFO baþlangýç konumu yukarýdan baþlar
+//    ICBYTES TV, back;
+//    int step[] = { 3, 3, 3, 3 }; // Normal hýz adýmlarý
+//    int fastStep[] = { 9, 9, 9, 9 }; // Hýzlý adýmlar
+//    bool isFast = false;
+//    bool showUFO = true;
+//    bool ufoWaited = false;
+//
+//    // Arka planý yükle ve baþlangýçta ajan durma pozisyonunu göster
+//    ReadImage("touchsome.bmp", Corridor);
+//    Copy(Corridor, xcor, ycor, 75, 55, back); // Daha büyük bir kare boyutu kaydediyoruz
+//
+//    // Ajan durma pozisyonu baþlangýçta ekranda gösteriliyor
+//    PasteNon0(AgentStanding, xcor, ycor, Corridor);
+//    MagnifyX3(Corridor, TV);
+//    DisplayImage(F1, TV);
+//
+//    // Baþlangýç sesi oynatma
+//    //PlaySound("Another_Visitor.wav", NULL, SND_SYNC);
+//
+//    // Ajan koþmaya baþlýyor
+//    int i = 0;
+//    while (true) {
+//        // Her karede arka planý yeniden çizme
+//        ReadImage("touchsome.bmp", Corridor); // Önceki kareyi temizler
+//
+//        // UFO hareketi
+//        if (showUFO) {
+//            PasteNon0(UFO, ufoX, ufoY, Corridor);
+//            ufoX -= 20; // UFO hýzlý bir þekilde saðdan sola hareket ediyor
+//            if (ufoX <= 450 && !ufoWaited) { // UFO ekranýn ortasýna geldiðinde
+//                Sleep(1000); // Kýsa bir bekleme süresi (1 saniye)
+//                ufoWaited = true;
+//            }
+//            if (ufoX < -100) showUFO = false; // UFO ekranýn solundan çýkýnca kaybolacak
+//        }
+//
+//        // Hýz kontrolü
+//        if (ufoX < 450 && ufoWaited) {
+//            isFast = true; // UFO ekranýn ortasýna geldikten sonra hýzlan
+//        }
+//
+//        if (isFast) {
+//            PasteNon0(AgentRunFast[i % 6], xcor, ycor, Corridor); // Hýzlý kareler
+//            xcor += fastStep[i % 4]; // Hýzlý hareket
+//        }
+//        else {
+//            PasteNon0(AgentRun[i % 4], xcor, ycor, Corridor); // Normal kareler
+//            xcor += step[i % 4]; // Normal hareket
+//        }
+//
+//        // Güncellenmiþ kareyi gösterme
+//        MagnifyX3(Corridor, TV);
+//        DisplayImage(F1, TV);
+//        Sleep(isFast ? 40 : 60); // Hýz durumuna göre bekleme süresi
+//
+//        if (i % 4 == 0) PlaySound("Step.wav", NULL, SND_ASYNC); // Adým sesi
+//        i++;
+//
+//        // Ajan sýnýrý geçtiðinde baþlangýca döndürme
+//        if (xcor > 300) {
+//            xcor = 1; // Pozisyonu sýfýrla
+//            isFast = false; // Hýzý sýfýrla
+//            i = 0;
+//            showUFO = true; // Ajan sýfýrlanýnca UFO tekrar görünür
+//            ufoX = 900; // UFO baþlangýç pozisyonuna sýfýrlanýr
+//            ufoWaited = false; // UFO tekrar ortaya geldiðinde bekleme yapmasý için sýfýrlanýr
+//        }
+//
+//        // Ajanýn durma pozisyonunu yeniden ekranda göster
+//        PasteNon0(AgentStanding, xcor, ycor, Corridor); // Durma pozisyonu her döngüde yeniden çizilmelidir.
+//    }
+//}
+//
+//void ICGUI_main() {
+//    F1 = ICG_FrameThin(5, 140, 450, 430);
+//    F2 = ICG_FrameThin(5, 5, 20, 20);
+//    ICG_Button(400, 5, 160, 55, "Load Agent Run\n1 -----------------------------------\n KOÞAN AJANI YÜKLE", LoadAgentRun);
+//    ICG_TButton(580, 5, 160, 55, "Make Agent Run\n2 -----------------------------------\n AJANI KOÞTUR", MakeAgentRun, NULL);
+//    ReadImage("touchsome.bmp", Corridor);
+//    DisplayImage(F1, Corridor);
+//    ReadImage("53632678.bmp", Agent);
+//    DisplayImage(F2, Agent);
+//}
+
+
+#include <windows.h>
+#include "icb_gui.h"
+
+//#pragma comment (lib,"winmm.lib")
+
+int F1, F2;
+ICBYTES Corridor, Agent, UFO, Cow, Tree, Bird, Dog; // Cow ekleniyor
+ICBYTES AgentStanding; // Ajan ayakta dururken
+ICBYTES AgentRun[4];   // Normal hýzda koþan ajan
+ICBYTES AgentRunFast[6]; // Hýzlandýrýlmýþ ajan koþma dizisi
+ICBYTES DogRunFast[3];
+ICBYTES CowRun[2];
+ICBYTES BirdFly[6];
+
+void ICGUI_Create() {
+    ICG_MWSize(1200, 830);
+    ICG_MWTitle("IMPOSSIBLE MISSION");
+}
+
+void playSound(const char* soundFile) {
+    PlaySound(soundFile, NULL, SND_ASYNC);
+}
+
+void LoadAgentRun() {
+    ReadImage("touchsome.bmp", Corridor);
+    ReadImage("pixilUfo.bmp", UFO); // UFO görüntüsünü 
+    ReadImage("xyy.bmp", Cow);
+    ReadImage("Treee.bmp", Tree);
+    ReadImage("birds.bmp", Bird);
+    ReadImage("dogg.bmp", Dog);
+
+    // Ajanýn durduðu pozisyonu yükleme
+    Copy(Agent, 212, 7, 45, 55, AgentStanding);
+    PasteNon0(AgentStanding, 600, 450, Corridor);
+
+    // Koþma animasyonu için diziyi doldurma
+    ICBYTES cordinat{ {210, 7, 50, 55}, {286, 7, 50, 55}, {210, 67, 50, 55}, {286, 66, 50, 55} };
+    for (int i = 0; i < cordinat.Y(); i++) {
+        Copy(Agent, cordinat.I(1, i + 1), cordinat.I(2, i + 1), cordinat.I(3, i + 1), cordinat.I(4, i + 1), AgentRun[i]);
+
+    }
+
+    // Hýzlý koþma animasyonu için diziyi doldurma
+    ICBYTES fastCordinat{ {210, 7, 50, 55}, {113, 8, 75, 55}, {19, 67, 75, 55}, {210, 67, 50, 55}, {113, 67, 75, 55}, {19, 5, 75, 55} };
+    for (int i = 0; i < fastCordinat.Y(); i++) {
+        Copy(Agent, fastCordinat.I(1, i + 1), fastCordinat.I(2, i + 1), fastCordinat.I(3, i + 1), fastCordinat.I(4, i + 1), AgentRunFast[i]);
+    }
+
+    // Ýnek için koordinatlar
+    ICBYTES cowCoordinates{ {38, 15, 60, 40}, { 38, 68, 60, 40 } };
+
+    // Ýnek görüntülerini yükleme
+    for (int i = 0; i < cowCoordinates.Y(); i++) {
+        Copy(Cow, cowCoordinates.I(1, i + 1), cowCoordinates.I(2, i + 1), cowCoordinates.I(3, i + 1), cowCoordinates.I(4, i + 1), CowRun[i]);
+    }
+
+    //Kuþ için koordinatlar
+    ICBYTES birdCoordinates{ {2, 5, 38, 39}, { 42, 5, 38, 39 }, { 82, 12, 40, 30 },{ 3, 52, 39, 41 } ,{ 43, 55, 39, 28 } ,{ 83, 50, 39, 32 } };
+    // Ýnek görüntülerini yükleme
+    for (int i = 0; i < birdCoordinates.Y(); i++) {
+        Copy(Bird, birdCoordinates.I(1, i + 1), birdCoordinates.I(2, i + 1), birdCoordinates.I(3, i + 1), birdCoordinates.I(4, i + 1), BirdFly[i]);
+    }
+
+    ICBYTES dogFastCoords{ {10,90,71,32}, {86,89,71,33}, {163,91,75,31} }; // Fast run frames
+    for (int i = 0; i < 3; i++) {
+        Copy(Dog, dogFastCoords.I(1, i + 1), dogFastCoords.I(2, i + 1), dogFastCoords.I(3, i + 1), dogFastCoords.I(4, i + 1), DogRunFast[i]);
+    }
+
+    ICBYTES TV;
+    MagnifyX3(Corridor, TV); // Arka planý büyüterek gösterme
+    DisplayImage(F1, TV); // Arka plan yüklü
+}
+
+void MakeAgentRun(void*) {
+    int agentX = 1, agentY = 90;      // Ajanýn pozisyonu
+    int ufoX = -40, ufoY = 20;        // UFO baþlangýç konumu (solda ve yukarýda)
+    int cowX = 140, cowY = 103;       // Ýneðin pozisyonu
+    int cowShrinkRate = 5;            // Ýneðin boyutunu küçültme oraný
+    int birdX = 250;                  // Kuþun baþlangýç konumu (saðdan baþlayacak)
+    int birdY = 40;                   // Kuþun Y koordinatý
+    int dogX = 25;  // Position the dog slightly behind the agent
+    int dogY = 125;
+    ICBYTES TV, back;                 // Aðaç için ICBYTES tanýmý
+    int fastStep[] = { 6, 6, 6, 6 };  // Hýzlý adýmlar
+    bool showUFO = false;
+    bool cowCaught = false;
+    bool cowDisappear = false;
+    bool birdVisible = false;          // Kuþun görünürlük durumu
+
+    // Arka planý yükle ve ajan baþlangýçta durma pozisyonunda
+    ReadImage("touchsome.bmp", Corridor);
+    Copy(Corridor, agentX, agentY, 75, 55, back);
+    PasteNon0(AgentRunFast[0], agentX, agentY, Corridor); // Ajan hýzlý koþma pozisyonunda
+    MagnifyX3(Corridor, TV);
+    DisplayImage(F1, TV);
+    Sleep(500); // Baþlangýçta kýsa bekleme
+    PlaySound("scream2.wav", NULL, SND_ASYNC);
+
+
+    // Aðaç görüntüsünü yükle
+    ReadImage("treee.bmp", Tree); // Aðaç görüntüsünü yükle
+    int treeX = 200;               // Aðaç X koordinatý (sað tarafta)
+    int treeY = 2;                 // Aðaç Y koordinatý (çimlerin üzerine yerleþtirmek için)
+
+    int i = 0;
+    while (true) {
+        ReadImage("touchsome.bmp", Corridor); // Arka planý temizle
+
+        // Aðaç görüntüsünü ekrana yerleþtir
+        PasteNon0(Tree, treeX, treeY, Corridor);
+
+        // UFO’yu görünür yap
+        if (agentX >= cowX - 50 && !showUFO) {
+            showUFO = true; // UFO ekrana giriyor
+            
+        }     
+
+        // UFO, ajanýn peþinden gelir
+        if (showUFO) {
+            PasteNon0(UFO, ufoX, ufoY, Corridor); // UFO'yu çiz
+            
+
+            // UFO, ineðin üstüne geldiðinde ineði yukarý çeker ve kaybolmasýný saðlar
+            if (ufoX >= cowX - 40 && ufoX < cowX + 40 && !cowCaught) {
+                cowCaught = true; // Ýnek yakalandý
+                PlaySound("cowww.wav", NULL, SND_ASYNC);
+                
+            }
+
+            // UFO'nun Y koordinatýný sabit tut
+            if (cowCaught) {
+                ufoY = 20; // UFO'nun Y pozisyonunu sabit tut
+            }
+            else {
+
+                ufoX += 5; // UFO saða doðru hareket eder
+            }
+
+            // Kuþu hareket ettirmek için kuþ görünürlüðünü kontrol et
+            if (!birdVisible) {
+                birdVisible = true; // Kuþ görünür hale geliyor
+                PlaySound("birdd.wav", NULL, SND_ASYNC);
+            }
+        }
+
+        // Kuþu ekrana yerleþtir ve hareket ettir
+        if (birdVisible) {
+            PasteNon0(BirdFly[i / 10 % 6], birdX, birdY, Corridor); // Kuþ animasyonu
+            birdX -= 15; // Kuþ sola doðru daha hýzlý hareket eder
+            birdY -= 2;  // Kuþ yukarýya doðru hafif hareket eder
+        }
+
+        // Ajanýn hýzlý koþma animasyonu
+        PasteNon0(AgentRunFast[i % 6], agentX, agentY, Corridor);
+        agentX += fastStep[i % 4]; // Ajan sürekli hýzlý koþar
+
+        PasteNon0(DogRunFast[i % 3], dogX, dogY, Corridor);
+        dogX += fastStep[i % 4];
+
+        // Ýnek animasyonu
+        if (!cowCaught && !cowDisappear) {
+            PasteNon0(CowRun[(i / 10) % 2], cowX, cowY, Corridor); // Ýnek animasyonu
+        }
+        
+        // Ýnek yakalanýnca yukarý hareket ve küçülme
+        if (cowCaught && !cowDisappear) {
+            cowY -= 10; // Ýneði yukarý doðru hareket ettir
+            cowShrinkRate += 2; // Ýneðin boyutunu küçült 
+            PasteNon0(CowRun[0], cowX, cowY, Corridor);
+
+            if (cowY < ufoY + 10) { // UFO’ya ulaþtýðýnda kaybolur
+                cowDisappear = true;
+                PlaySound("flyUfoo.wav", NULL, SND_ASYNC);
+            }
+        }
+
+        // UFO, ineðin yukarý hareketi sýrasýnda bekle
+        if (cowDisappear) {
+            ufoX += 10; // UFO saða hýzlanarak gider
+            if (ufoX > 400) break; // Ekrandan tamamen çýktýðýnda döngü biter
+        }
+
+        // Ekraný güncelle
+        MagnifyX3(Corridor, TV);
+        DisplayImage(F1, TV);
+        Sleep(40); // Animasyon hýzýný kontrol eder
+
+        i++; // Çerçeve sayýsýný artýr
+    }
+}
+
+void ICGUI_main() {
+    F1 = ICG_FrameThin(5, 140, 450, 430);
+    F2 = ICG_FrameThin(5, 5, 20, 20);
+    ICG_Button(400, 5, 160, 55, "Load Agent Run\n1 -----------------------------------\n Hikayeyi Yükle", LoadAgentRun);
+    ICG_TButton(580, 5, 160, 55, "Make Agent Run\n2 -----------------------------------\n Ajaný Koþtur", MakeAgentRun, NULL);
+    ReadImage("touchsome.bmp", Corridor);
+    DisplayImage(F1, Corridor);
+    ReadImage("53632678.bmp", Agent);
+    DisplayImage(F2, Agent);
+}
