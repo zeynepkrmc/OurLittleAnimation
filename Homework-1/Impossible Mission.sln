@@ -514,7 +514,7 @@ void ICGUI_main() {
 //}
 
 
-#include <windows.h>
+/*#include <windows.h>
 #include "icb_gui.h"
 
 //#pragma comment (lib,"winmm.lib")
@@ -715,3 +715,4 @@ void ICGUI_main() {
     ReadImage("53632678.bmp", Agent);
     DisplayImage(F2, Agent);
 }
+*/
